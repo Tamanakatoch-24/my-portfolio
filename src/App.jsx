@@ -1,20 +1,12 @@
 
+import { useRef, useState } from 'react'
 import './App.css'
 
 const skills = [
-  'React.js',
-  'JavaScript',
-  'HTML',
-  'CSS',
-  'Node.js',
-  'Express.js',
-  'MongoDB',
-  'Python',
-  'Java',
-  'C++',
-  'MySQL',
-  'Git',
-  'GitHub'
+  'React.js', 'JavaScript', 'HTML', 'CSS',
+  'Node.js', 'Express.js', 'MongoDB',
+  'Python', 'Java', 'C++', 'MySQL',
+  'Git', 'GitHub'
 ]
 
 const projects = [
@@ -40,58 +32,154 @@ const projects = [
   }
 ]
 
+const services = [
+  {
+    number: '01',
+    icon: '◈',
+    title: 'Website Development',
+    description:
+      'Modern, responsive websites designed for businesses and personal brands.'
+  },
+  {
+    number: '02',
+    icon: '⌘',
+    title: 'Frontend Development',
+    description:
+      'Interactive React interfaces with polished layouts and mobile-friendly experiences.'
+  },
+  {
+    number: '03',
+    icon: '✦',
+    title: 'Website Improvements',
+    description:
+      'UI enhancements, responsive fixes and website feature updates.'
+  }
+]
+
+function TiltCard({ children, className = '' }) {
+  const cardRef = useRef(null)
+
+  const handleMouseMove = (event) => {
+    const card = cardRef.current
+    if (!card) return
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return
+    }
+
+    const rect = card.getBoundingClientRect()
+    const x = (event.clientX - rect.left) / rect.width
+    const y = (event.clientY - rect.top) / rect.height
+
+    const rotateX = (0.5 - y) * 7
+    const rotateY = (x - 0.5) * 7
+
+    card.style.transform =
+      `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`
+
+    card.style.setProperty('--mouse-x', `${x * 100}%`)
+    card.style.setProperty('--mouse-y', `${y * 100}%`)
+  }
+
+  const resetTilt = () => {
+    if (cardRef.current) {
+      cardRef.current.style.transform = ''
+    }
+  }
+
+  return (
+    <div
+      ref={cardRef}
+      className={`tilt-card ${className}`}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={resetTilt}
+    >
+      {children}
+    </div>
+  )
+}
+
 function App() {
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  const closeMenu = () => setMenuOpen(false)
+
   return (
     <div className="portfolio">
 
+      {/* BACKGROUND EFFECTS */}
+      <div className="ambient-orb orb-one" aria-hidden="true" />
+      <div className="ambient-orb orb-two" aria-hidden="true" />
+
       {/* NAVBAR */}
       <header className="navbar">
-        <a href="#home" className="logo">
+        <a href="#home" className="logo" onClick={closeMenu}>
           Tamana<span>.</span>
         </a>
 
-        <nav>
-          <a href="#home">Home</a>
-          <a href="#about">About</a>
-          <a href="#skills">Skills</a>
-          <a href="#projects">Projects</a>
-          <a href="#services">Services</a>
-          <a href="#contact">Contact</a>
+        <button
+          className="menu-toggle"
+          type="button"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={menuOpen}
+          aria-controls="main-navigation"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? '✕' : '☰'}
+        </button>
+
+        <nav
+          id="main-navigation"
+          className={menuOpen ? 'nav-open' : ''}
+          aria-label="Main navigation"
+        >
+          <a href="#home" onClick={closeMenu}>Home</a>
+          <a href="#about" onClick={closeMenu}>About</a>
+          <a href="#skills" onClick={closeMenu}>Skills</a>
+          <a href="#projects" onClick={closeMenu}>Projects</a>
+          <a href="#services" onClick={closeMenu}>Services</a>
+          <a href="#contact" onClick={closeMenu}>Contact</a>
         </nav>
       </header>
 
       <main>
 
-        {/* HOME SECTION */}
+        {/* HERO */}
         <section className="hero" id="home">
-
           <div className="hero-content">
 
+            <div className="availability-pill">
+              <span className="status-dot" />
+              Open to Freelance Projects
+            </div>
+
             <span className="eyebrow">
-              WELCOME TO MY PORTFOLIO
+              WELCOME TO MY DIGITAL SPACE
             </span>
 
             <h1>
-              Hi, I'm <span>Tamana Katoch</span>
+              Hi, I'm
+              <span className="gradient-text"> Tamana Katoch</span>
             </h1>
 
-            <h2>Full Stack Web Developer</h2>
+            <h2>
+              Full Stack <span>Web Developer</span>
+            </h2>
 
             <p>
-              I build modern, responsive and user-friendly
-              websites. I enjoy transforming ideas into
-              functional digital experiences.
+              I design and develop modern, responsive and
+              user-friendly digital experiences. Turning
+              creative ideas into functional websites
+              with clean code and thoughtful design.
             </p>
 
-            {/* HOME BUTTONS */}
             <div className="buttons">
-
               <a href="#projects" className="btn primary">
-                View My Work
+                Explore My Work <span>↗</span>
               </a>
 
               <a href="#contact" className="btn secondary">
-                Contact Me
+                Let's Connect
               </a>
 
               <a
@@ -101,19 +189,9 @@ function App() {
               >
                 Download Resume ↓
               </a>
-
             </div>
 
-            {/* SOCIAL LINKS */}
-            <div
-              className="social-links"
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '20px'
-              }}
-            >
-
+            <div className="social-links">
               <a
                 href="https://github.com/Tamanakatoch-24"
                 target="_blank"
@@ -131,130 +209,176 @@ function App() {
               </a>
 
               <a href="mailto:tamanakatoch2005@gmail.com">
-                Email ✉
+                Email ↗
               </a>
-
             </div>
-
           </div>
 
-          {/* HERO DESIGN */}
+          {/* PREMIUM 3D VISUAL */}
           <div className="hero-visual">
-            <div className="profile-circle">
-              <span>TK</span>
-              <p>DESIGN • DEVELOP • DEPLOY</p>
+            <div className="hero-orbit orbit-outer" />
+            <div className="hero-orbit orbit-inner" />
+
+            <div className="floating-chip chip-top">
+              <span className="chip-icon">✦</span>
+              Creative Developer
+            </div>
+
+            <div className="developer-card">
+              <div className="card-shine" />
+
+              <div className="developer-card-top">
+                <span className="window-dots">
+                  <i /><i /><i />
+                </span>
+                <span>developer.profile</span>
+              </div>
+
+              <div className="developer-card-body">
+                <div className="avatar-3d">
+                  <span>TK</span>
+                </div>
+
+                <div className="developer-label">
+                  FULL STACK DEVELOPER
+                </div>
+
+                <h3>Tamana Katoch</h3>
+
+                <p>
+                  Design. Develop. Deploy.
+                </p>
+
+                <div className="code-preview">
+                  <div>
+                    <span className="code-purple">const</span>
+                    {' developer = {'}
+                  </div>
+                  <div>
+                    {'  '}passion:
+                    <span className="code-green"> 'building'</span>,
+                  </div>
+                  <div>
+                    {'  '}focus:
+                    <span className="code-green"> 'web experiences'</span>
+                  </div>
+                  <div>{'}'}</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="floating-chip chip-bottom">
+              <span className="chip-icon">◈</span>
+              React • Node.js • Python
             </div>
           </div>
-
         </section>
 
-        {/* ABOUT SECTION */}
+        {/* ABOUT */}
         <section className="section" id="about">
-
-          <span className="eyebrow">
-            GET TO KNOW ME
-          </span>
+          <span className="eyebrow">GET TO KNOW ME</span>
 
           <h2 className="section-title">
             About <span>Me</span>
           </h2>
 
-          <p className="about-text">
-            I'm Tamana Katoch, a Computer Science and
-            Engineering student at Chandigarh University.
+          <div className="about-panel">
+            <div className="about-accent" />
 
-            I am passionate about full-stack web development,
-            problem-solving and creating real-world applications.
+            <p className="about-text">
+              I'm Tamana Katoch, a Computer Science and
+              Engineering student at Chandigarh University.
+              I am passionate about full-stack web development,
+              problem-solving and creating real-world applications.
+              I work with React, JavaScript, Python, Node.js
+              and databases to build modern digital solutions.
+            </p>
 
-            I have experience working with React, JavaScript,
-            Python, Node.js and databases.
-
-            My goal is to help individuals and businesses
-            build modern, responsive and professional websites.
-          </p>
-
+            <div className="about-highlights">
+              <span>✦ Clean Design</span>
+              <span>✦ Responsive Websites</span>
+              <span>✦ Full Stack Development</span>
+            </div>
+          </div>
         </section>
 
-        {/* SKILLS SECTION */}
+        {/* SKILLS */}
         <section className="section" id="skills">
-
-          <span className="eyebrow">
-            WHAT I WORK WITH
-          </span>
+          <span className="eyebrow">MY TECH STACK</span>
 
           <h2 className="section-title">
             Technical <span>Skills</span>
           </h2>
 
-          <div className="skills-grid">
+          <p className="section-description">
+            Technologies and tools I use to bring ideas to life.
+          </p>
 
-            {skills.map((skill) => (
+          <div className="skills-grid">
+            {skills.map((skill, index) => (
               <div className="skill-card" key={skill}>
-                {skill}
+                <span className="skill-symbol">
+                  {['◇', '✦', '⌘', '◈'][index % 4]}
+                </span>
+                <span>{skill}</span>
               </div>
             ))}
-
           </div>
-
         </section>
 
-        {/* PROJECTS SECTION */}
+        {/* PROJECTS */}
         <section className="section" id="projects">
-
-          <span className="eyebrow">
-            MY RECENT WORK
-          </span>
+          <span className="eyebrow">SELECTED WORK</span>
 
           <h2 className="section-title">
             Featured <span>Projects</span>
           </h2>
 
+          <p className="section-description">
+            A selection of projects I've designed and developed.
+          </p>
+
           <div className="projects-grid">
-
-            {projects.map((project) => (
-
-              <article
+            {projects.map((project, index) => (
+              <TiltCard
                 className="project-card"
                 key={project.title}
               >
+                <div className="project-media">
+                  {project.image ? (
+                    <img
+                      src={project.image}
+                      alt={`${project.title} project screenshot`}
+                      className="project-image"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="project-placeholder">
+                      <span>⌘</span>
+                      <p>PYTHON • SECURITY</p>
+                    </div>
+                  )}
 
-                {/* PROJECT IMAGE */}
-                {project.image && (
-                  <img
-                    src={project.image}
-                    alt={`${project.title} project screenshot`}
-                    className="project-image"
-                    loading="lazy"
-                  />
-                )}
-
-                {/* PROJECT TITLE */}
-                <div className="project-top">
-
-                  <span>{project.category}</span>
-
-                  <h3>{project.title}</h3>
-
+                  <span className="project-number">
+                    0{index + 1}
+                  </span>
                 </div>
 
-                {/* PROJECT DETAILS */}
-                <div className="project-body">
+                <div className="project-top">
+                  <span>{project.category}</span>
+                  <h3>{project.title}</h3>
+                </div>
 
+                <div className="project-body">
                   <p>{project.description}</p>
 
                   <div className="tags">
-
                     {project.tech.map((tech) => (
-                      <span key={tech}>
-                        {tech}
-                      </span>
+                      <span key={tech}>{tech}</span>
                     ))}
-
                   </div>
 
-                  {/* PROJECT LINKS */}
                   <div className="project-links">
-
                     {project.live && (
                       <a
                         href={project.live}
@@ -274,128 +398,100 @@ function App() {
                         GitHub ↗
                       </a>
                     )}
-
                   </div>
-
                 </div>
-
-              </article>
-
+              </TiltCard>
             ))}
-
           </div>
-
         </section>
 
-        {/* SERVICES SECTION */}
+        {/* SERVICES */}
         <section className="section" id="services">
-
-          <span className="eyebrow">
-            HOW I CAN HELP
-          </span>
+          <span className="eyebrow">WHAT I CAN DO</span>
 
           <h2 className="section-title">
             My <span>Services</span>
           </h2>
 
-          <div className="services-grid">
-
-            <div className="service-card">
-              <span>01</span>
-              <h3>Website Development</h3>
-              <p>
-                Modern and responsive websites for
-                businesses and personal brands.
-              </p>
-            </div>
-
-            <div className="service-card">
-              <span>02</span>
-              <h3>Frontend Development</h3>
-              <p>
-                Interactive React interfaces with clean
-                layouts and mobile-friendly designs.
-              </p>
-            </div>
-
-            <div className="service-card">
-              <span>03</span>
-              <h3>Website Improvements</h3>
-              <p>
-                UI enhancements, responsive layout fixes
-                and website feature updates.
-              </p>
-            </div>
-
-          </div>
-
-        </section>
-
-        {/* CONTACT SECTION */}
-        <section className="section contact" id="contact">
-
-          <span className="eyebrow">
-            LET'S CONNECT
-          </span>
-
-          <h2 className="section-title">
-            Let's Work <span>Together</span>
-          </h2>
-
-          <p>
-            Have a website idea or a project in mind?
-            I'd love to hear about it.
-            Feel free to contact me for freelance projects
-            and collaborations.
+          <p className="section-description">
+            Helping businesses and individuals create
+            meaningful online experiences.
           </p>
 
-          <div
-            className="buttons"
-            style={{
-              justifyContent: 'center',
-              flexWrap: 'wrap'
-            }}
-          >
+          <div className="services-grid">
+            {services.map((service) => (
+              <TiltCard
+                className="service-card"
+                key={service.number}
+              >
+                <div className="service-header">
+                  <span className="service-icon">
+                    {service.icon}
+                  </span>
+                  <span className="service-number">
+                    {service.number}
+                  </span>
+                </div>
 
-            <a
-              href="mailto:tamanakatoch2005@gmail.com?subject=Freelance%20Project%20Inquiry"
-              className="btn primary"
-            >
-              Hire Me ✉
-            </a>
-
-            <a
-              href="https://www.linkedin.com/in/tamana-katoch-16bab42a3"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn secondary"
-            >
-              Connect on LinkedIn ↗
-            </a>
-
-            <a
-              href="https://github.com/Tamanakatoch-24"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn secondary"
-            >
-              View GitHub ↗
-            </a>
-
+                <h3>{service.title}</h3>
+                <p>{service.description}</p>
+              </TiltCard>
+            ))}
           </div>
-
         </section>
 
+        {/* CONTACT */}
+        <section className="section contact" id="contact">
+          <div className="contact-panel">
+            <span className="eyebrow">
+              HAVE A PROJECT IN MIND?
+            </span>
+
+            <h2 className="section-title">
+              Let's Build Something <span>Great.</span>
+            </h2>
+
+            <p>
+              Looking for a developer to bring your ideas
+              to life? Let's connect and discuss your project.
+            </p>
+
+            <div className="buttons contact-buttons">
+              <a
+                href="mailto:tamanakatoch2005@gmail.com?subject=Freelance%20Project%20Inquiry"
+                className="btn primary"
+              >
+                Hire Me ↗
+              </a>
+
+              <a
+                href="https://www.linkedin.com/in/tamana-katoch-16bab42a3"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn secondary"
+              >
+                LinkedIn ↗
+              </a>
+
+              <a
+                href="https://github.com/Tamanakatoch-24"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn secondary"
+              >
+                GitHub ↗
+              </a>
+            </div>
+          </div>
+        </section>
       </main>
 
-      {/* FOOTER */}
       <footer>
         <p>
           © {new Date().getFullYear()} Tamana Katoch.
-          All rights reserved.
+          Crafted with creativity and code.
         </p>
       </footer>
-
     </div>
   )
 }
